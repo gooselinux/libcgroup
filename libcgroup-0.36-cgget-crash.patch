@@ -1,0 +1,67 @@
+601071  - [abrt] libcgroup-0.36.1-3.el6: _IO_getdelim: Process /bin/cgget was killed by signal 11 (SIGSEGV)
+
+Sent upstream as http://thread.gmane.org/gmane.comp.lib.libcg.devel/1996
+
+diff -up libcgroup-0.36.1/src/api.c.crash libcgroup-0.36.1/src/api.c
+--- libcgroup-0.36.1/src/api.c.crash	2010-05-17 23:50:15.000000000 +0200
++++ libcgroup-0.36.1/src/api.c	2010-06-16 09:58:44.000000000 +0200
+@@ -2784,8 +2784,10 @@ static int cg_read_stat(FILE *fp, struct
+ 	char *saveptr = NULL;
+ 
+ 	read_bytes = getline(&line, &len, fp);
+-	if (read_bytes == -1)
+-		return ECGEOF;
++	if (read_bytes == -1) {
++		ret = ECGEOF;
++		goto out_free;
++	}
+ 
+ 	token = strtok_r(line, " ", &saveptr);
+ 	if (!token) {
+@@ -2803,7 +2805,7 @@ static int cg_read_stat(FILE *fp, struct
+ 
+ out_free:
+ 	free(line);
+-	return 0;
++	return ret;
+ }
+ 
+ int cgroup_read_stats_end(void **handle)
+@@ -2846,7 +2848,9 @@ int cgroup_read_stats_begin(const char *
+ {
+ 	int ret = 0;
+ 	char stat_file[FILENAME_MAX];
++	char stat_path[FILENAME_MAX];
+ 	FILE *fp;
++	int written;
+ 
+ 	if (!cgroup_initialized)
+ 		return ECGROUPNOTINITIALIZED;
+@@ -2854,10 +2858,13 @@ int cgroup_read_stats_begin(const char *
+ 	if (!cgroup_stat || !handle)
+ 		return ECGINVAL;
+ 
+-	if (!cg_build_path(path, stat_file, controller))
++	if (!cg_build_path(path, stat_path, controller))
+ 		return ECGOTHER;
+ 
+-	sprintf(stat_file, "%s/%s.stat", stat_file, controller);
++	written = snprintf(stat_file, sizeof(stat_file), "%s/%s.stat", stat_path,
++			controller);
++	if (written >= sizeof(stat_file))
++		return ECGFAIL;
+ 
+ 	fp = fopen(stat_file, "r");
+ 	if (!fp) {
+diff -up libcgroup-0.36.1/src/tools/cgget.c.crash libcgroup-0.36.1/src/tools/cgget.c
+--- libcgroup-0.36.1/src/tools/cgget.c.crash	2010-03-26 12:56:45.000000000 +0100
++++ libcgroup-0.36.1/src/tools/cgget.c	2010-06-16 09:58:44.000000000 +0200
+@@ -50,7 +50,7 @@ static int display_one_record(char *name
+ 		void *handle;
+ 		struct cgroup_stat stat;
+ 
+-		cgroup_read_stats_begin(group_controller->name,
++		ret = cgroup_read_stats_begin(group_controller->name,
+ 			"/", &handle, &stat);
+ 		if (ret != 0) {
+ 			fprintf(stderr, "stats read failed\n");

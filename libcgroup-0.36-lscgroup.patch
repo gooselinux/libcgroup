@@ -1,0 +1,22 @@
+Fix a bug in lscgroup which prevent it from reading cgroups frou
+output.
+
+Signed-off-by: Ivana Hutarova Varekova <varekova@redhat.com>
+---
+
+ src/tools/lscgroup.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/tools/lscgroup.c b/src/tools/lscgroup.c
+index ca846e0..a07134a 100644
+--- a/src/tools/lscgroup.c
++++ b/src/tools/lscgroup.c
+@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
+ 
+ 	/* read the list of controllers */
+ 	while (optind < argc) {
+-		ret = parse_cgroup_spec(cgroup_list, optarg,
++		ret = parse_cgroup_spec(cgroup_list, argv[optind],
+ 				CG_HIER_MAX);
+ 		if (ret) {
+ 			fprintf(stderr, "%s: cgroup controller"

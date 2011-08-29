@@ -1,0 +1,23 @@
+diff -up libcgroup-0.36.1/doc/man/Makefile.am.mp libcgroup-0.36.1/doc/man/Makefile.am
+--- libcgroup-0.36.1/doc/man/Makefile.am.mp	2010-01-18 18:52:35.000000000 +0100
++++ libcgroup-0.36.1/doc/man/Makefile.am	2010-06-01 14:36:15.000000000 +0200
+@@ -1,5 +1,6 @@
+ man_MANS = cgclassify.1 cgconfig.conf.5 cgconfigparser.8 cgexec.1 cgred.conf.5 \
+-           cgrules.conf.5 cgrulesengd.8 cgcreate.1 cgset.1 cgclear.1 cgget.1
++           cgrules.conf.5 cgrulesengd.8 cgcreate.1 cgset.1 cgclear.1 cgget.1 \
++           cgdelete.1 lssubsys.1 lscgroup.1
+ 
+ EXTRA_DIST = $(man_MANS)
+ 
+diff -up libcgroup-0.36.1/doc/man/Makefile.in.mp libcgroup-0.36.1/doc/man/Makefile.in
+--- libcgroup-0.36.1/doc/man/Makefile.in.mp	2010-05-21 14:32:11.000000000 +0200
++++ libcgroup-0.36.1/doc/man/Makefile.in	2010-06-01 14:36:52.000000000 +0200
+@@ -206,7 +206,7 @@ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ man_MANS = cgclassify.1 cgconfig.conf.5 cgconfigparser.8 cgexec.1 cgred.conf.5 \
+-           cgrules.conf.5 cgrulesengd.8 cgcreate.1 cgset.1 cgclear.1 cgget.1
++           cgrules.conf.5 cgrulesengd.8 cgcreate.1 cgset.1 cgclear.1 cgget.1 lssubsys.1 lscgroup.1 cgdelete.1
+ 
+ EXTRA_DIST = $(man_MANS)
+ all: all-am
