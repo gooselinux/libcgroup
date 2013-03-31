@@ -5,7 +5,7 @@ Name: libcgroup
 Summary: Tools and libraries to control and monitor control groups
 Group: Development/Libraries
 Version: 0.36.1
-Release: 6%{?dist}
+Release: 6%{?dist}.1
 License: LGPLv2+
 URL: http://libcg.sourceforge.net/
 Source0: http://downloads.sourceforge.net/libcg/%{name}-%{version}.tar.bz2
@@ -19,6 +19,8 @@ Patch3: libcgroup-0.36-cgget-crash.patch
 Patch4: libcgroup-0.36-lscgroup.patch
 Patch5: libcgroup-0.36.1-fix-initscripts.patch
 Patch6: libcgroup-0.36.1-initscripts2.patch
+Patch7: libcgroup-CVE-2011-1006.patch
+Patch8: libcgroup-CVE-2011-1022.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: pam-devel
@@ -59,6 +61,8 @@ provide scripts to manage that configuration.
 %patch4 -p1 -b .ls
 %patch5 -p1 -b .lsb
 %patch6 -p1 -b .rv
+%patch7 -p1 -b .CVE-2011-1006
+%patch8 -p1 -b .CVE-2011-1022
 
 %build
 %configure --bindir=/bin --sbindir=/sbin --libdir=%{_libdir}
@@ -168,6 +172,11 @@ fi
 
 
 %changelog
+* Tue Mar  1 2011 Jan Safranek <jsafrane@redhat.com>  0.36-6.1
+- Fixed buffer overflow when parsing cgexec command line parameters.
+- Added checking of source of netlink messages to cgrulesengd daemon.
+- Resolves: CVE-2011-1006 CVE-2011-1022
+
 * Wed Jul 14 2010 Ivana Hutarova Varekova <varekova@redhat.com> 0.36-6
 - Resolves: #609816
   serivces of libcgroup not LSB-compliant

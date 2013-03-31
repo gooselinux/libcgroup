@@ -1,0 +1,35 @@
+Libcgroup integration into Red Hat Enterprise Linux
+===================================================
+
+Apart from standard libcgroup features, we add support for starting system
+services in given control group(s).
+
+If a service init script
+1) uses daemon() function from /etc/init.d/functions to start the service
+2) and uses /etc/sysconfig/<service name> for its configuration,
+you can add CGROUP_DAEMON="<space separated list of groups>" to the
+/etc/sysconfig/<service name> to start the service in given group.
+
+
+Example
+-------
+How to start Apache web server in group cpu,cpuacct:/daemons/http:
+1. Configure your group in /etc/cgconfig.conf (see cgconfig.conf man page).
+2. Add following line to /etc/sysconfig/httpd:
+CGROUP_DAEMON="cpu,cpuacct:/daemons/http"
+
+During next boot (or after restart of cgconfig and httpd services), your http
+daemon and all its children should be started in the given groups.
+
+
+Details
+-------
+The daemon() function in /etc/init.d/functions was modified to start the daemon
+in control group(s) specified by CGROUP_DAEMON environment variable. Therefore it
+won't work on all services, but only those which satisfy the two aforementioned
+conditions.
+
+CGROUP_DAEMON can contain more than one control group, separate them with space
+then:
+CGROUP_DAEMON="cpu:/daemons/http cpuacct:/daemons"
+
